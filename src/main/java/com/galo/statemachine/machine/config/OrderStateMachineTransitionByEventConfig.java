@@ -12,7 +12,9 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 import org.springframework.statemachine.listener.StateMachineListener;
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
-
+import org.springframework.statemachine.action.Action;
+import javax.swing.*;
+import java.util.Collection;
 import java.util.EnumSet;
 
 
@@ -40,7 +42,37 @@ public class OrderStateMachineTransitionByEventConfig extends EnumStateMachineCo
         states
                 .withStates()
                 .initial(OrderStates.CREATED)
+                .state(OrderStates.CREATED)
+                .state(OrderStates.APPROVED)
+                .state(OrderStates.CANCELLED)
+                .state(OrderStates.INVOICED, sendAction3())
+                .state(OrderStates.SHIPPED, sendEmail(), sendAction2())
+                .state(OrderStates.DELIVERED)
                 .states(EnumSet.allOf(OrderStates.class));
+    }
+
+    /*
+    * Incluindo uma ação
+    * Podemos incrementar nossa máquina de estados associando ações de entrada e/ou saída do estado. Por exemplo,
+    * podemos incluir uma ação de envio de email quando o estado de SHIPPED for alcançado. Para isso,
+    * vamos modificar a definição dos estados e incluir a ação de entrada no estado SHIPPED. Note:
+    * a ação de entrada será uma action (sendEmail) e a ação de saída explicitamos como “null”
+    * (na prática, podemos omitir esse segundo parâmetro — fizemos isso apenas para esclarecer que é possível
+    * informar a ação de saída neste ponto).
+    * */
+    @Bean
+    public Action<OrderStates, OrderEvents> sendEmail() {
+        return context -> System.out.println("Email para informar envio do pedido");
+    }
+
+    @Bean
+    public Action<OrderStates, OrderEvents> sendAction2() {
+        return context -> System.out.println("Action 2");
+    }
+
+    @Bean
+    public Action<OrderStates, OrderEvents> sendAction3() {
+        return context -> System.out.println("Action 3");
     }
 
     //Para definir as transições, a configuração a seguir utiliza a seguinte sequência lógica: dado um estado de origem (source),
@@ -74,7 +106,8 @@ public class OrderStateMachineTransitionByEventConfig extends EnumStateMachineCo
         return new StateMachineListenerAdapter<OrderStates, OrderEvents>() {
             @Override
             public void stateChanged(State<OrderStates, OrderEvents> from, State<OrderStates, OrderEvents> to) {
-                System.out.println("OrderState change from " + from.getId() + " to " + to.getId());
+                System.out.println("OrderState change from " + to.getId());
+//                System.out.println("OrderState change from " + from.getId() + " to " + to.getId());
             }
         };
     }

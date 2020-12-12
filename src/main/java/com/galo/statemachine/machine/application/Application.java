@@ -19,13 +19,22 @@ public class Application implements CommandLineRunner {
         SpringApplication.run(Application.class, args);
     }
 
+//    @Override
+//    public void run(String... args) {
+//        System.out.println("Iniciando máquina de estados...");
+//        stateMachine.sendEvent(OrderEvents.CONFIRMED_PAYMENT);
+//        stateMachine.sendEvent(OrderEvents.INVOICE_ISSUED);
+//        stateMachine.sendEvent(OrderEvents.SHIP);
+//        stateMachine.sendEvent(OrderEvents.DELIVER);
+//        System.out.println("Máquina de estados finalizada");
+//    }
+
     @Override
     public void run(String... args) {
         System.out.println("Iniciando máquina de estados...");
         stateMachine.sendEvent(OrderEvents.CONFIRMED_PAYMENT);
         stateMachine.sendEvent(OrderEvents.INVOICE_ISSUED);
         stateMachine.sendEvent(OrderEvents.SHIP);
-        stateMachine.sendEvent(OrderEvents.DELIVER);
         System.out.println("Máquina de estados finalizada");
     }
 }
