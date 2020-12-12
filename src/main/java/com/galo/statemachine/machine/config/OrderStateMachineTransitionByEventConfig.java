@@ -3,10 +3,12 @@ package com.galo.statemachine.machine.config;
 import com.galo.statemachine.machine.action.Action1;
 import com.galo.statemachine.machine.action.Action2;
 import com.galo.statemachine.machine.events.OrderEvents;
+import com.galo.statemachine.machine.guard.MGuard;
 import com.galo.statemachine.machine.states.OrderStates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
@@ -35,6 +37,7 @@ public class OrderStateMachineTransitionByEventConfig extends EnumStateMachineCo
     // implementando as ações
     private final Action1 action1;
     private final Action2 action2;
+    private final MGuard guard;
 
     //No método abaixo, vamos configurar o startup automático e incluir um listener para identificar as transições de estados.
     @Override
@@ -82,20 +85,16 @@ public class OrderStateMachineTransitionByEventConfig extends EnumStateMachineCo
     public void configure(StateMachineTransitionConfigurer<OrderStates, OrderEvents> transitions) throws Exception {
         transitions
                 .withExternal()
-                .source(OrderStates.CREATED).target(OrderStates.APPROVED)
-                .event(OrderEvents.CONFIRMED_PAYMENT)
+                .source(OrderStates.CREATED).target(OrderStates.APPROVED).event(OrderEvents.CONFIRMED_PAYMENT)
                 .and().withExternal()
-                .source(OrderStates.APPROVED).target(OrderStates.INVOICED)
-                .event(OrderEvents.INVOICE_ISSUED)
+                .source(OrderStates.APPROVED).target(OrderStates.INVOICED).event(OrderEvents.INVOICE_ISSUED).guard(guard)
                 .and().withExternal()
-                .source(OrderStates.APPROVED).target(OrderStates.CANCELLED)
-                .event(OrderEvents.CANCEL)
+                .source(OrderStates.APPROVED).target(OrderStates.CANCELLED).event(OrderEvents.CANCEL)
                 .and().withExternal()
-                .source(OrderStates.INVOICED).target(OrderStates.SHIPPED)
-                .event(OrderEvents.SHIP)
+                .source(OrderStates.INVOICED).target(OrderStates.SHIPPED).event(OrderEvents.SHIP)
                 .and().withExternal()
-                .source(OrderStates.SHIPPED).target(OrderStates.DELIVERED)
-                .event(OrderEvents.DELIVER)
+                .source(OrderStates.SHIPPED).target(OrderStates.DELIVERED).event(OrderEvents.DELIVER)
+
                 /*
                 * Podemos incluir também uma condição de guarda para a transição de estados. Ou seja, a transição de
                 * estado só ocorrerá se respeitar a condição de guarda. Como exemplo, podemos incluir a seguinte

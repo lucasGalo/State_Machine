@@ -35,14 +35,14 @@ public class Application implements CommandLineRunner {
 //        System.out.println("Máquina de estados finalizada");
 //    }
 
-    @Override
-    public void run(String... args) {
-        System.out.println("Iniciando máquina de estados...");
-        stateMachine.sendEvent(OrderEvents.CONFIRMED_PAYMENT);
-        stateMachine.sendEvent(OrderEvents.INVOICE_ISSUED);
-        stateMachine.sendEvent(OrderEvents.SHIP);
-        System.out.println("Máquina de estados finalizada");
-    }
+//    @Override
+//    public void run(String... args) {
+//        System.out.println("Iniciando máquina de estados...");
+//        stateMachine.sendEvent(OrderEvents.CONFIRMED_PAYMENT);
+//        stateMachine.sendEvent(OrderEvents.INVOICE_ISSUED);
+//        stateMachine.sendEvent(OrderEvents.SHIP);
+//        System.out.println("Máquina de estados finalizada");
+//    }
 
 
     /*
@@ -51,24 +51,24 @@ public class Application implements CommandLineRunner {
     * nosso payload da mensagem é um enum, estamos passando a informação na header da mensagem. Mas,
     * o evento poderia ser um objeto complexo contendo essa informação se fosse necessário.
     * */
-//    @Override
-//    public void run(String... args) {
-//        System.out.println("Iniciando máquina de estados...");
-//        stateMachine.sendEvent(OrderEvents.CONFIRMED_PAYMENT);
-//        stateMachine.sendEvent(new Message<OrderEvents>() {
-//            @Override
-//            public OrderEvents getPayload() {
-//                return OrderEvents.INVOICE_ISSUED;
-//            }
-//
-//            @Override
-//            public MessageHeaders getHeaders() {
-//                final Map<String, Object> params = new HashMap<>();
-//                final LocalDate saturday = LocalDate.of(2019, 2, 2);
-//                params.put("day", saturday);
-//                return new MessageHeaders(params);
-//            }
-//        });
-//        System.out.println("Máquina de estados finalizada");
-//    }
+    @Override
+    public void run(String... args) {
+        System.out.println(">>>Iniciando máquina de estados...");
+        stateMachine.sendEvent(OrderEvents.CONFIRMED_PAYMENT);
+        stateMachine.sendEvent(new Message<OrderEvents>() {
+            @Override
+            public OrderEvents getPayload() {
+                return OrderEvents.INVOICE_ISSUED;
+            }
+
+            @Override
+            public MessageHeaders getHeaders() {
+                final Map<String, Object> params = new HashMap<>();
+                final LocalDate saturday = LocalDate.of(2019, 2, 2);
+                params.put("day", saturday);
+                return new MessageHeaders(params);
+            }
+        });
+        System.out.println(">>>Máquina de estados finalizada");
+    }
 }
